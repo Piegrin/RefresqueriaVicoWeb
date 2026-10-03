@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refresquería Vico | Tienda en Línea</title>
+    <!-- Tailwind CSS CDN para un diseño moderno tipo Shopify/MercadoLibre -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- NAVBAR SECUNDARIO (Top bar) -->
+    <div class="bg-gray-900 text-white text-xs py-2 px-6 flex justify-between items-center">
+        <div>Atención al cliente: +52 686-353-7565</div>
+        <div class="flex space-x-4">
+            <a href="#" class="hover:text-gray-300">Rastrear Pedido</a>
+            <a href="#" class="hover:text-gray-300">Ayuda</a>
+        </div>
+    </div>
+
+    <!-- NAVBAR PRINCIPAL -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="home.html" class="flex items-center space-x-2">
+                <i class="fa-solid fa-glass-water text-3xl text-yellow-500"></i>
+                <span class="text-2xl font-black tracking-tight text-gray-900">Refresquería <span class="text-yellow-500">Vico</span></span>
+            </a>
+
+            <!-- Buscador tipo Mercado Libre -->
+            <div class="hidden md:flex flex-1 max-w-2xl mx-8 relative">
+                <input type="text" id="searchInput" placeholder="Buscar refrescos, jugos, snacks..." class="w-full border border-gray-300 rounded-full py-2 pl-5 pr-10 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent">
+                <button class="absolute right-0 top-0 mt-2 mr-4 text-gray-500 hover:text-gray-700">
+                    <i class="fa-solid fa-search"></i>
+                </button>
+            </div>
+
+            <!-- Iconos de cuenta y carrito -->
+            <nav class="flex items-center space-x-6">
+                <a href="Login.html" class="flex items-center text-gray-600 hover:text-yellow-600 transition">
+                    <i class="fa-regular fa-user text-xl mr-2"></i>
+                    <span class="hidden sm:inline font-medium">Mi cuenta</span>
+                </a>
+                <a href="Carrito.html" class="flex items-center text-gray-600 hover:text-yellow-600 transition relative">
+                    <i class="fa-solid fa-cart-shopping text-xl mr-2"></i>
+                    <span class="hidden sm:inline font-medium">Carrito</span>
+                    <span id="cart-counter" class="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">0</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO SECTION (Banner principal) -->
+    <main>
+        <section class="relative bg-yellow-400 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 flex flex-col lg:flex-row items-center">
+                <div class="lg:w-1/2 z-10">
+                    <h1 class="text-4xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-4">
+                        Refresca tu día con <br>los mejores sabores
+                    </h1>
+                    <p class="text-lg text-gray-800 mb-8 max-w-lg">
+                        Encuentra tus bebidas favoritas, desde sodas clásicas hasta jugos naturales. Envío rápido y seguro a la puerta de tu casa.
+                    </p>
+                    <a href="#productos" class="bg-gray-900 text-white font-bold py-3 px-8 rounded-full hover:bg-gray-800 transition shadow-lg">
+                        Ver Catálogo
+                    </a>
+                </div>
+                <div class="lg:w-1/2 mt-10 lg:mt-0 relative">
+                    <!-- Imagen de alta calidad para el banner -->
+                    <img src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Bebidas frías" class="rounded-2xl shadow-2xl object-cover h-80 w-full">
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DE PRODUCTOS -->
+        <section id="productos" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900">Bebidas Destacadas</h2>
+                    <p class="text-gray-500 mt-2">Nuestra selección más refrescante</p>
+                </div>
+                <a href="#" class="text-yellow-600 font-semibold hover:text-yellow-700 hidden sm:block">Ver todos &rarr;</a>
+            </div>
+
+            <!-- Contenedor del Grid de Productos -->
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                <!-- Los productos se cargarán dinámicamente aquí -->
+                <div class="col-span-full text-center text-gray-500 py-10">Cargando productos...</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-white pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="col-span-1 md:col-span-1">
+                <div class="flex items-center space-x-2 mb-4">
+                    <i class="fa-solid fa-glass-water text-2xl text-yellow-500"></i>
+                    <span class="text-xl font-black">Refresquería <span class="text-yellow-500">Vico</span></span>
+                </div>
+                <p class="text-gray-400 text-sm">Tu tienda de confianza para refrescar cada momento del día.</p>
+            </div>
+            
+            <div>
+                <h3 class="text-lg font-bold mb-4">Ubicación</h3>
+                <ul class="text-gray-400 text-sm space-y-2">
+                    <li><i class="fa-solid fa-map-marker-alt mr-2 text-yellow-500"></i> Av. Las Grutas 661</li>
+                    <li>Fraccionamiento Caminos del Sur</li>
+                    <li>21386 Mexicali, B.C.</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3 class="text-lg font-bold mb-4">Horarios</h3>
+                <ul class="text-gray-400 text-sm space-y-2">
+                    <li><i class="fa-regular fa-clock mr-2 text-yellow-500"></i> Lunes a Domingo</li>
+                    <li>06:00 am - 01:00 am</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3 class="text-lg font-bold mb-4">Contacto</h3>
+                <ul class="text-gray-400 text-sm space-y-2">
+                    <li><i class="fa-solid fa-phone mr-2 text-yellow-500"></i> +52 686-353-7565</li>
+                    <li><i class="fa-solid fa-envelope mr-2 text-yellow-500"></i> contacto@refresqueriavico.com</li>
+                </ul>
+                <div class="mt-4 flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition"><i class="fa-brands fa-facebook text-xl"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition"><i class="fa-brands fa-instagram text-xl"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition"><i class="fa-brands fa-whatsapp text-xl"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+            &copy; 2026 Refresquería Vico. Todos los derechos reservados.
+        </div>
+    </footer>
+
+    <script>
+        let allProducts = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchProducts();
+            updateAuthUI();
+            updateCartCounter();
+
+            const searchInput = document.getElementById('searchInput');
+            if(searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase();
+                    const filtered = allProducts.filter(p => p.nombre.toLowerCase().includes(query));
+                    renderProducts(filtered);
+                });
+            }
+        });
+
+        async function fetchProducts() {
+            try {
+                const response = await fetch('api/productos');
+                allProducts = await response.json();
+                renderProducts(allProducts);
+            } catch (error) {
+                console.error("Error al cargar productos:", error);
+                document.getElementById('product-grid').innerHTML = '<div class="col-span-full text-center text-red-500 py-10">Error al cargar productos del servidor.</div>';
+            }
+        }
+
+        function renderProducts(products) {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+            
+            if (products.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-10">No hay productos disponibles.</div>';
+                return;
+            }
+
+            products.forEach((prod, index) => {
+                let badgeHTML = '';
+                if (index === 0) badgeHTML = '<div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">OFERTA</div>';
+                if (index === 3) badgeHTML = '<div class="absolute top-4 left-4 bg-gray-900 text-white text-xs font-bold px-2 py-1 rounded">NUEVO</div>';
+
+                const imgUrl = prod.urlImagen || 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500';
+
+                const card = document.createElement('div');
+                card.className = 'product-card bg-white rounded-2xl p-5 border border-gray-100 transition-all duration-300 relative group';
+                card.innerHTML = `
+                    ${badgeHTML}
+                    <div class="h-48 flex justify-center items-center mb-4">
+                        <img src="${imgUrl}" alt="${prod.nombre}" class="h-full object-contain group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <p class="text-sm text-gray-400 font-medium mb-1">${prod.categoria?.nombreCategoria || 'Refrescos'}</p>
+                    <h3 class="font-bold text-gray-900 text-lg mb-2 line-clamp-2">${prod.nombre}</h3>
+                    <div class="flex justify-between items-center mt-4">
+                        <div>
+                            <span class="text-2xl font-black text-gray-900">$${prod.precio.toFixed(2)}</span>
+                        </div>
+                    </div>
+                    <button onclick="addToCart(${prod.productoID})" class="w-full mt-4 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-2 rounded-xl transition">
+                        Agregar al Carrito
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function updateAuthUI() {
+            const userName = sessionStorage.getItem('nombre');
+            const userRole = sessionStorage.getItem('rol');
+            
+            if (userName) {
+                const accountBtn = document.querySelector('a[href="Login.html"]');
+                if (accountBtn) {
+                    accountBtn.innerHTML = '<i class="fa-regular fa-user text-xl mr-2"></i><span class="hidden sm:inline font-medium">Hola, ' + userName.split(' ')[0] + '</span>';
+                    accountBtn.href = "Perfil.html";
+
+                    if (userRole === 'Administrador') {
+                        const adminBtn = document.createElement('a');
+                        adminBtn.href = "MainMenu.html";
+                        adminBtn.className = "hidden sm:flex items-center text-sm font-bold text-white bg-gray-900 hover:bg-gray-800 px-4 py-2 rounded-xl transition shadow-sm ml-4";
+                        adminBtn.innerHTML = '<i class="fa-solid fa-gauge mr-2"></i> Panel Admin';
+                        accountBtn.parentNode.parentNode.insertBefore(adminBtn, accountBtn.parentNode.nextSibling);
+                    }
+                }
+            }
+        }
+
+        function getCartKey() {
+            const userId = sessionStorage.getItem('usuarioID') || 'guest';
+            return 'vico_cart_' + userId;
+        }
+
+        function getCart() {
+            const cartStr = localStorage.getItem(getCartKey());
+            return cartStr ? JSON.parse(cartStr) : [];
+        }
+
+        function updateCartCounter() {
+            const cart = getCart();
+            const totalItems = cart.reduce((sum, item) => sum + item.cantidad, 0);
+            const counterEl = document.getElementById('cart-counter');
+            if(counterEl) {
+                counterEl.innerText = totalItems;
+            }
+        }
+
+        function addToCart(productId) {
+            const product = allProducts.find(p => p.productoID === productId);
+            if(!product) return;
+
+            let cart = getCart();
+            const existingItem = cart.find(item => item.producto.productoID === productId);
+            
+            if (existingItem) {
+                existingItem.cantidad += 1;
+            } else {
+                cart.push({ producto: product, cantidad: 1 });
+            }
+
+            localStorage.setItem(getCartKey(), JSON.stringify(cart));
+            updateCartCounter();
+
+            Swal.fire({
+                title: '¡Agregado!',
+                text: product.nombre + ' se agregó al carrito.',
+                icon: 'success',
+                toast: true,
+                position: 'bottom-end',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true
+            });
+        }
+    </script>
+</body>
+</html>

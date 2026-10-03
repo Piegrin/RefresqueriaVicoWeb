@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil | Refresquería Vico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- NAVBAR SIMPLE -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <a href="home.html" class="flex items-center space-x-2">
+                <i class="fa-solid fa-glass-water text-3xl text-yellow-500"></i>
+                <span class="text-2xl font-black tracking-tight text-gray-900">Refresquería <span class="text-yellow-500">Vico</span></span>
+            </a>
+            <div class="flex items-center space-x-4">
+                <a href="home.html" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition flex items-center">
+                    <i class="fa-solid fa-house mr-2"></i> Inicio
+                </a>
+                <button onclick="cerrarSesion()" class="text-sm font-medium text-red-500 hover:text-red-700 transition flex items-center ml-4">
+                    <i class="fa-solid fa-right-from-bracket mr-2"></i> Salir
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN FORM -->
+    <main class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 w-full">
+        <div class="max-w-2xl w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+            <div class="bg-gray-900 py-6 px-8 flex items-center space-x-4">
+                <div class="h-16 w-16 bg-yellow-400 rounded-full flex items-center justify-center text-gray-900 text-2xl font-black">
+                    <i class="fa-regular fa-user"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-extrabold text-white">Mi Perfil</h2>
+                    <p class="text-gray-400 mt-1 font-medium text-sm">Gestiona tus datos personales</p>
+                </div>
+            </div>
+            
+            <div class="p-8">
+                <form class="space-y-6" id="perfilForm">
+                    <input type="hidden" id="usuarioID">
+                    <input type="hidden" id="rolID">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Nombre -->
+                        <div>
+                            <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre Completo</label>
+                            <div class="mt-2 relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fa-regular fa-user text-gray-400"></i>
+                                </div>
+                                <input id="nombre" type="text" required class="appearance-none block w-full pl-10 px-3 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+                            </div>
+                        </div>
+
+                        <!-- Correo -->
+                        <div>
+                            <label for="correo" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
+                            <div class="mt-2 relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fa-regular fa-envelope text-gray-400"></i>
+                                </div>
+                                <input id="correo" type="email" required class="appearance-none block w-full pl-10 px-3 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+                            </div>
+                        </div>
+
+                        <!-- Teléfono -->
+                        <div>
+                            <label for="telefono" class="block text-sm font-medium text-gray-700">Teléfono</label>
+                            <div class="mt-2 relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fa-solid fa-phone text-gray-400"></i>
+                                </div>
+                                <input id="telefono" type="tel" class="appearance-none block w-full pl-10 px-3 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" placeholder="Opcional">
+                            </div>
+                        </div>
+
+                        <!-- Contraseña -->
+                        <div>
+                            <label for="contrasena" class="block text-sm font-medium text-gray-700">Nueva Contraseña</label>
+                            <div class="mt-2 relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fa-solid fa-lock text-gray-400"></i>
+                                </div>
+                                <input id="contrasena" type="password" class="appearance-none block w-full pl-10 px-3 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" placeholder="Dejar en blanco para no cambiar">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-6 border-t border-gray-100 flex justify-end">
+                        <button type="button" onclick="guardarPerfil()" class="flex items-center justify-center py-3 px-8 border border-transparent rounded-xl shadow-sm text-sm font-bold text-gray-900 bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors">
+                            <i class="fa-solid fa-floppy-disk mr-2"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER SIMPLE -->
+    <footer class="bg-gray-900 py-6 text-center text-sm text-gray-500">
+        &copy; 2026 Refresquería Vico. Todos los derechos reservados.
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userId = sessionStorage.getItem('usuarioID');
+            if (!userId) {
+                window.location.href = 'Login.html';
+                return;
+            }
+            cargarDatosUsuario(userId);
+        });
+
+        async function cargarDatosUsuario(id) {
+            try {
+                const response = await fetch(`api/usuarios/${id}`);
+                if (response.ok) {
+                    const usuario = await response.json();
+                    document.getElementById('usuarioID').value = usuario.usuarioID;
+                    document.getElementById('nombre').value = usuario.nombre || '';
+                    document.getElementById('correo').value = usuario.correo || '';
+                    document.getElementById('telefono').value = usuario.telefono || '';
+                    if(usuario.rol) {
+                        document.getElementById('rolID').value = usuario.rol.rolID;
+                    }
+                } else {
+                    Swal.fire('Error', 'No se pudieron cargar tus datos.', 'error');
+                }
+            } catch (error) {
+                console.error("Error al cargar perfil:", error);
+            }
+        }
+
+        async function guardarPerfil() {
+            const id = document.getElementById('usuarioID').value;
+            const nombre = document.getElementById('nombre').value.trim();
+            const correo = document.getElementById('correo').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const contrasena = document.getElementById('contrasena').value.trim();
+            const rolID = document.getElementById('rolID').value || 2;
+
+            if (!nombre || !correo) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campos requeridos',
+                    text: 'El nombre y correo son obligatorios.',
+                    confirmButtonColor: '#eab308'
+                });
+                return;
+            }
+
+            const payload = {
+                usuarioID: parseInt(id),
+                nombre: nombre,
+                correo: correo,
+                telefono: telefono,
+                rol: { rolID: parseInt(rolID) }
+            };
+
+            // Solo enviamos contraseña si el usuario escribió algo nuevo
+            if (contrasena) {
+                payload.contrasenaHash = contrasena;
+            }
+
+            try {
+                const response = await fetch('api/usuarios', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    // Actualizar sessionStorage con el nuevo nombre
+                    sessionStorage.setItem('nombre', nombre);
+                    Swal.fire({
+                        title: '¡Actualizado!',
+                        text: 'Tus datos se guardaron correctamente.',
+                        icon: 'success',
+                        confirmButtonColor: '#eab308'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', data.mensaje || 'Error al actualizar', 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Problema de conexión al guardar.', 'error');
+                console.error(error);
+            }
+        }
+
+        function cerrarSesion() {
+            Swal.fire({
+                title: '¿Cerrar sesión?',
+                text: "Saldrás de tu cuenta",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Sí, salir',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    sessionStorage.clear();
+                    window.location.href = 'home.html';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+# Entornos de desarrollo
+.idea/
+*.iml
+*.iws
+
+# Carpetas de compilación
+out/
+build/
+bin/
+target/
+
+# Archivos de macOS / Windows
+.DS_Store
+Thumbs.db
+
+# Deployment local de Tomcat (Smart Tomcat)
+RefresqueriaVicoGestion/webapps/
+
+# Archivos compilados de Java sueltos
+*.class

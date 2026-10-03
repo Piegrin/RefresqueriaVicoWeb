@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Cuenta | Refresquería Vico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- NAVBAR SIMPLE -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <a href="home.html" class="flex items-center space-x-2">
+                <i class="fa-solid fa-glass-water text-3xl text-yellow-500"></i>
+                <span class="text-2xl font-black tracking-tight text-gray-900">Refresquería <span class="text-yellow-500">Vico</span></span>
+            </a>
+            <a href="Login.html" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition">
+                &larr; Volver al Login
+            </a>
+        </div>
+    </header>
+
+    <!-- MAIN FORM -->
+    <main class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="bg-yellow-400 py-6 text-center">
+                <h2 class="text-3xl font-extrabold text-gray-900">Crear Cuenta</h2>
+                <p class="text-gray-800 mt-2 font-medium">Únete a la familia Vico</p>
+            </div>
+            
+            <div class="p-8">
+                <form class="space-y-4" id="registroForm">
+                    <!-- Nombre -->
+                    <div>
+                        <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre Completo</label>
+                        <div class="mt-1 relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa-regular fa-user text-gray-400"></i>
+                            </div>
+                            <input id="nombre" type="text" required class="appearance-none block w-full pl-10 px-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" placeholder="Juan Pérez">
+                        </div>
+                    </div>
+
+                    <!-- Correo -->
+                    <div>
+                        <label for="correo" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
+                        <div class="mt-1 relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa-regular fa-envelope text-gray-400"></i>
+                            </div>
+                            <input id="correo" type="email" required class="appearance-none block w-full pl-10 px-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" placeholder="ejemplo@correo.com">
+                        </div>
+                    </div>
+
+                    <!-- Teléfono -->
+                    <div>
+                        <label for="telefono" class="block text-sm font-medium text-gray-700">Teléfono (opcional)</label>
+                        <div class="mt-1 relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-phone text-gray-400"></i>
+                            </div>
+                            <input id="telefono" type="tel" class="appearance-none block w-full pl-10 px-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" placeholder="1234567890">
+                        </div>
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div>
+                        <label for="contrasena" class="block text-sm font-medium text-gray-700">Contraseña</label>
+                        <div class="mt-1 relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-lock text-gray-400"></i>
+                            </div>
+                            <input id="contrasena" type="password" required class="appearance-none block w-full pl-10 px-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" placeholder="••••••••">
+                        </div>
+                    </div>
+
+                    <!-- Confirmar Contraseña -->
+                    <div>
+                        <label for="confirmar_contrasena" class="block text-sm font-medium text-gray-700">Confirmar Contraseña</label>
+                        <div class="mt-1 relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-check text-gray-400"></i>
+                            </div>
+                            <input id="confirmar_contrasena" type="password" required class="appearance-none block w-full pl-10 px-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" placeholder="••••••••">
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="button" onclick="registrarUsuario()" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-gray-900 bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors">
+                            Registrarse
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER SIMPLE -->
+    <footer class="bg-gray-900 py-6 text-center text-sm text-gray-500">
+        &copy; 2026 Refresquería Vico. Todos los derechos reservados.
+    </footer>
+
+    <script>
+        async function registrarUsuario() {
+            const nombre = document.getElementById('nombre').value.trim();
+            const correo = document.getElementById('correo').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const contrasena = document.getElementById('contrasena').value.trim();
+            const confirmar = document.getElementById('confirmar_contrasena').value.trim();
+
+            // 1. Validar campos vacíos
+            if (!nombre || !correo || !contrasena || !confirmar) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Faltan datos',
+                    text: 'Por favor, llena todos los campos obligatorios.',
+                    confirmButtonColor: '#eab308'
+                });
+                return;
+            }
+
+            // 2. Validar formato de correo básico
+            const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!regexCorreo.test(correo)) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Correo inválido',
+                    text: 'Por favor, ingresa un correo electrónico válido.',
+                    confirmButtonColor: '#eab308'
+                });
+                return;
+            }
+
+            // 3. Validar que las contraseñas coincidan
+            if (contrasena !== confirmar) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Contraseñas no coinciden',
+                    text: 'Asegúrate de escribir la misma contraseña en ambos campos.',
+                    confirmButtonColor: '#eab308'
+                });
+                return;
+            }
+
+            // 4. Preparar el JSON a enviar.
+            // Asignamos RolID = 2 por defecto para clientes regulares
+            const payload = {
+                nombre: nombre,
+                correo: correo,
+                telefono: telefono,
+                contrasenaHash: contrasena,
+                rol: { rolID: 2 }
+            };
+
+            try {
+                const response = await fetch('api/usuarios', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Cuenta Creada!',
+                        text: 'Tu cuenta ha sido creada exitosamente. Ahora puedes iniciar sesión.',
+                        showConfirmButton: true,
+                        confirmButtonText: 'Ir al Login',
+                        confirmButtonColor: '#eab308'
+                    }).then(() => {
+                        window.location.href = "Login.html";
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.mensaje || "Ocurrió un error al crear la cuenta.",
+                        confirmButtonColor: '#eab308'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    text: 'No se pudo conectar con el servidor.',
+                    confirmButtonColor: '#eab308'
+                });
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>
