@@ -10,28 +10,30 @@ public class DetalleVentaDAO {
         List<DetalleVenta> detalles = new ArrayList<>();
         String sql = "SELECT * FROM DetallesVenta WHERE VentaID=?";
 
-        try (Connection conn = ConexionBD.obtenerConexion();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, ventaID);
-            ResultSet rs = stmt.executeQuery();
-
-            ProductoDAO productoDAO = new ProductoDAO();
-            Venta v = new Venta();
-            v.setVentaID(ventaID);
-
-            while (rs.next()) {
-                Producto p = productoDAO.obtenerPorID(rs.getInt("ProductoID"));
-                DetalleVenta d = new DetalleVenta(
-                        rs.getInt("DetalleVentaID"),
-                        v,
-                        p,
-                        rs.getInt("Cantidad"),
-                        rs.getDouble("PrecioVenta")
-                );
-                detalles.add(d);
+        try (Connection conn = ConexionBD.obtenerConexion()) {
+            if (conn == null) {
+                return detalles;
             }
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, ventaID);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    ProductoDAO productoDAO = new ProductoDAO();
+                    Venta v = new Venta();
+                    v.setVentaID(ventaID);
 
+                    while (rs.next()) {
+                        Producto p = productoDAO.obtenerPorID(rs.getInt("ProductoID"));
+                        DetalleVenta d = new DetalleVenta(
+                                rs.getInt("DetalleID"),
+                                v,
+                                p,
+                                rs.getInt("Cantidad"),
+                                rs.getDouble("PrecioVenta")
+                        );
+                        detalles.add(d);
+                    }
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
