@@ -20,10 +20,25 @@ public class VentaServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         configurarCORS(response);
         try {
-            List<Venta> ventas = ventaService.obtenerTodas();
-            enviarJSON(response, gson.toJson(ventas));
+            String pathInfo = request.getPathInfo();
+            if (pathInfo == null || pathInfo.equals("/") || pathInfo.isEmpty()) {
+                List<Venta> ventas = ventaService.obtenerTodas();
+                response.setStatus(HttpServletResponse.SC_OK);
+                enviarJSON(response, gson.toJson(ventas));
+            } else {
+                int id = Integer.parseInt(pathInfo.replaceFirst("/", ""));
+                Venta venta = ventaService.obtenerVentaPorID(id);
+                if (venta == null) {
+                    manejarError(response, HttpServletResponse.SC_NOT_FOUND, "Venta no encontrada: " + id);
+                    return;
+                }
+                response.setStatus(HttpServletResponse.SC_OK);
+                enviarJSON(response, gson.toJson(venta));
+            }
+        } catch (NumberFormatException e) {
+            manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "ID de venta invalido");
         } catch (Exception e) {
-            manejarError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            manejarError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error al consultar ventas: " + e.getMessage());
         }
     }
 
@@ -32,13 +47,23 @@ public class VentaServlet extends HttpServlet {
         configurarCORS(response);
         try {
             Venta venta = gson.fromJson(request.getReader(), Venta.class);
+            if (venta == null || venta.getDetalles() == null || venta.getDetalles().isEmpty()) {
+                manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "La venta debe incluir al menos un producto");
+                return;
+            }
             boolean resultado = ventaService.realizarVenta(venta);
-
-            JsonObject json = new JsonObject();
-            json.addProperty("mensaje", resultado ? "Venta realizada correctamente" : "Error al realizar venta (posible stock insuficiente)");
-            enviarJSON(response, gson.toJson(json));
+            if (resultado) {
+                response.setStatus(HttpServletResponse.SC_CREATED);
+                JsonObject json = new JsonObject();
+                json.addProperty("exito", true);
+                json.addProperty("ventaID", venta.getVentaID());
+                json.addProperty("mensaje", "Venta realizada correctamente");
+                enviarJSON(response, gson.toJson(json));
+            } else {
+                manejarError(response, HttpServletResponse.SC_CONFLICT, "No se pudo completar la venta (stock insuficiente o error de registro)");
+            }
         } catch (Exception e) {
-            manejarError(response, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "Error al registrar la venta: " + e.getMessage());
         }
     }
 
@@ -64,7 +89,11 @@ public class VentaServlet extends HttpServlet {
     }
 
     private void manejarError(HttpServletResponse response, int codigo, String mensaje) throws IOException {
-        response.sendError(codigo, mensaje);
-        System.err.println("ERROR: " + mensaje);
+        response.setStatus(codigo);
+        JsonObject json = new JsonObject();
+        json.addProperty("exito", false);
+        json.addProperty("mensaje", mensaje);
+        enviarJSON(response, gson.toJson(json));
+        System.err.println("ERROR VentaServlet [" + codigo + "]: " + mensaje);
     }
 }

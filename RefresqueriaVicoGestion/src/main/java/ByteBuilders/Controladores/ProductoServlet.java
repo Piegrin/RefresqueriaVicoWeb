@@ -20,10 +20,25 @@ public class ProductoServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         configurarCORS(response);
         try {
-            List<Producto> productos = productoService.obtenerTodos();
-            enviarJSON(response, gson.toJson(productos));
+            String pathInfo = request.getPathInfo();
+            if (pathInfo == null || pathInfo.equals("/") || pathInfo.isEmpty()) {
+                List<Producto> productos = productoService.obtenerTodos();
+                response.setStatus(HttpServletResponse.SC_OK);
+                enviarJSON(response, gson.toJson(productos));
+            } else {
+                int id = Integer.parseInt(pathInfo.replaceFirst("/", ""));
+                Producto producto = productoService.obtenerPorID(id);
+                if (producto == null) {
+                    manejarError(response, HttpServletResponse.SC_NOT_FOUND, "Producto no encontrado: " + id);
+                    return;
+                }
+                response.setStatus(HttpServletResponse.SC_OK);
+                enviarJSON(response, gson.toJson(producto));
+            }
+        } catch (NumberFormatException e) {
+            manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "ID de producto invalido");
         } catch (Exception e) {
-            manejarError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            manejarError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error al consultar productos: " + e.getMessage());
         }
     }
 
@@ -32,13 +47,18 @@ public class ProductoServlet extends HttpServlet {
         configurarCORS(response);
         try {
             Producto producto = gson.fromJson(request.getReader(), Producto.class);
+            if (producto == null) {
+                manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "Datos de producto vacios o invalidos");
+                return;
+            }
             boolean resultado = productoService.agregarProducto(producto);
-
-            JsonObject json = new JsonObject();
-            json.addProperty("mensaje", resultado ? "Producto agregado correctamente" : "Error al agregar producto");
-            enviarJSON(response, gson.toJson(json));
+            if (resultado) {
+                enviarResultado(response, HttpServletResponse.SC_CREATED, true, "Producto agregado correctamente");
+            } else {
+                manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "No se pudo agregar el producto (verifica nombre duplicado, precio o categoria)");
+            }
         } catch (Exception e) {
-            manejarError(response, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "Error al agregar producto: " + e.getMessage());
         }
     }
 
@@ -47,13 +67,18 @@ public class ProductoServlet extends HttpServlet {
         configurarCORS(response);
         try {
             Producto producto = gson.fromJson(request.getReader(), Producto.class);
+            if (producto == null) {
+                manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "Datos de producto vacios o invalidos");
+                return;
+            }
             boolean resultado = productoService.actualizarProducto(producto);
-
-            JsonObject json = new JsonObject();
-            json.addProperty("mensaje", resultado ? "Producto actualizado correctamente" : "Error al actualizar producto");
-            enviarJSON(response, gson.toJson(json));
+            if (resultado) {
+                enviarResultado(response, HttpServletResponse.SC_OK, true, "Producto actualizado correctamente");
+            } else {
+                manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "No se pudo actualizar el producto (verifica ID, nombre o precio)");
+            }
         } catch (Exception e) {
-            manejarError(response, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "Error al actualizar producto: " + e.getMessage());
         }
     }
 
@@ -63,17 +88,26 @@ public class ProductoServlet extends HttpServlet {
         try {
             String idStr = request.getParameter("id");
             if (idStr == null || idStr.isEmpty()) {
+                String pathInfo = request.getPathInfo();
+                if (pathInfo != null && pathInfo.length() > 1) {
+                    idStr = pathInfo.replaceFirst("/", "");
+                }
+            }
+            if (idStr == null || idStr.isEmpty()) {
                 manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "Se requiere el ID del producto a eliminar");
                 return;
             }
             int id = Integer.parseInt(idStr);
             boolean resultado = productoService.eliminarProducto(id);
-            
-            JsonObject json = new JsonObject();
-            json.addProperty("mensaje", resultado ? "Producto eliminado correctamente" : "Error al eliminar producto");
-            enviarJSON(response, gson.toJson(json));
+            if (resultado) {
+                enviarResultado(response, HttpServletResponse.SC_OK, true, "Producto eliminado correctamente");
+            } else {
+                manejarError(response, HttpServletResponse.SC_CONFLICT, "No se pudo eliminar el producto (puede no existir o estar asociado a ventas)");
+            }
+        } catch (NumberFormatException e) {
+            manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "ID de producto invalido");
         } catch (Exception e) {
-            manejarError(response, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            manejarError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error al eliminar producto: " + e.getMessage());
         }
     }
 
@@ -91,6 +125,14 @@ public class ProductoServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
     }
 
+    private void enviarResultado(HttpServletResponse response, int codigo, boolean exito, String mensaje) throws IOException {
+        response.setStatus(codigo);
+        JsonObject json = new JsonObject();
+        json.addProperty("exito", exito);
+        json.addProperty("mensaje", mensaje);
+        enviarJSON(response, gson.toJson(json));
+    }
+
     private void enviarJSON(HttpServletResponse response, String json) throws IOException {
         try (PrintWriter out = response.getWriter()) {
             out.print(json);
@@ -99,9 +141,7 @@ public class ProductoServlet extends HttpServlet {
     }
 
     private void manejarError(HttpServletResponse response, int codigo, String mensaje) throws IOException {
-        response.sendError(codigo, mensaje);
-        System.err.println("ERROR: " + mensaje);
+        enviarResultado(response, codigo, false, mensaje);
+        System.err.println("ERROR ProductoServlet [" + codigo + "]: " + mensaje);
     }
 }
-
-

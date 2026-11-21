@@ -24,6 +24,7 @@ public class UsuarioServlet extends HttpServlet {
         try {
             if (pathInfo == null || pathInfo.equals("/") || pathInfo.isEmpty()) {
                 List<Usuario> usuarios = usuarioService.obtenerTodos();
+                response.setStatus(HttpServletResponse.SC_OK);
                 enviarJSON(response, gson.toJson(usuarios));
             } else {
                 String idStr = pathInfo.replaceFirst("/", "");
@@ -33,10 +34,11 @@ public class UsuarioServlet extends HttpServlet {
                     manejarError(response, HttpServletResponse.SC_NOT_FOUND, "Usuario no encontrado: " + id);
                     return;
                 }
+                response.setStatus(HttpServletResponse.SC_OK);
                 enviarJSON(response, gson.toJson(usuario));
             }
         } catch (NumberFormatException e) {
-            manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "ID inválido");
+            manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "ID de usuario invalido");
         } catch (Exception e) {
             manejarError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error al procesar GET: " + e.getMessage());
         }
@@ -47,11 +49,16 @@ public class UsuarioServlet extends HttpServlet {
         configurarCORS(response);
         try {
             Usuario usuario = gson.fromJson(request.getReader(), Usuario.class);
+            if (usuario == null) {
+                manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "Datos de usuario vacios o invalidos");
+                return;
+            }
             boolean resultado = usuarioService.crearUsuario(usuario);
-
-            JsonObject json = new JsonObject();
-            json.addProperty("mensaje", resultado ? "Usuario creado correctamente" : "Error al crear usuario");
-            enviarJSON(response, gson.toJson(json));
+            if (resultado) {
+                enviarResultado(response, HttpServletResponse.SC_CREATED, true, "Usuario creado correctamente");
+            } else {
+                manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "No se pudo crear el usuario (verifica campos obligatorios o duplicados)");
+            }
         } catch (Exception e) {
             manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "Error al crear usuario: " + e.getMessage());
         }
@@ -62,11 +69,16 @@ public class UsuarioServlet extends HttpServlet {
         configurarCORS(response);
         try {
             Usuario usuario = gson.fromJson(request.getReader(), Usuario.class);
+            if (usuario == null) {
+                manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "Datos de usuario vacios o invalidos");
+                return;
+            }
             boolean resultado = usuarioService.actualizarUsuario(usuario);
-
-            JsonObject json = new JsonObject();
-            json.addProperty("mensaje", resultado ? "Usuario actualizado correctamente" : "Error al actualizar usuario");
-            enviarJSON(response, gson.toJson(json));
+            if (resultado) {
+                enviarResultado(response, HttpServletResponse.SC_OK, true, "Usuario actualizado correctamente");
+            } else {
+                manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "No se pudo actualizar el usuario (verifica ID y datos ingresados)");
+            }
         } catch (Exception e) {
             manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "Error al actualizar usuario: " + e.getMessage());
         }
@@ -86,11 +98,13 @@ public class UsuarioServlet extends HttpServlet {
             int id = Integer.parseInt(idStr);
 
             boolean resultado = usuarioService.eliminarUsuario(id);
-            JsonObject json = new JsonObject();
-            json.addProperty("mensaje", resultado ? "Usuario eliminado correctamente" : "Error al eliminar usuario");
-            enviarJSON(response, gson.toJson(json));
+            if (resultado) {
+                enviarResultado(response, HttpServletResponse.SC_OK, true, "Usuario eliminado correctamente");
+            } else {
+                manejarError(response, HttpServletResponse.SC_CONFLICT, "No se pudo eliminar el usuario (puede no existir o tener ventas asociadas)");
+            }
         } catch (NumberFormatException e) {
-            manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "ID inválido");
+            manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "ID de usuario invalido");
         } catch (Exception e) {
             manejarError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error al eliminar usuario: " + e.getMessage());
         }
@@ -110,6 +124,14 @@ public class UsuarioServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
     }
 
+    private void enviarResultado(HttpServletResponse response, int codigo, boolean exito, String mensaje) throws IOException {
+        response.setStatus(codigo);
+        JsonObject json = new JsonObject();
+        json.addProperty("exito", exito);
+        json.addProperty("mensaje", mensaje);
+        enviarJSON(response, gson.toJson(json));
+    }
+
     private void enviarJSON(HttpServletResponse response, String json) throws IOException {
         try (PrintWriter out = response.getWriter()) {
             out.print(json);
@@ -118,7 +140,7 @@ public class UsuarioServlet extends HttpServlet {
     }
 
     private void manejarError(HttpServletResponse response, int codigo, String mensaje) throws IOException {
-        response.sendError(codigo, mensaje);
-        System.err.println("ERROR: " + mensaje);
+        enviarResultado(response, codigo, false, mensaje);
+        System.err.println("ERROR UsuarioServlet [" + codigo + "]: " + mensaje);
     }
 }
