@@ -20,27 +20,49 @@ public class LoginServlet extends HttpServlet {
         configurarCORS(response);
         try {
             JsonObject credenciales = gson.fromJson(request.getReader(), JsonObject.class);
-            String correo = credenciales.has("correo") ? credenciales.get("correo").getAsString() : "";
-            String contrasena = credenciales.has("contrasena") ? credenciales.get("contrasena").getAsString() : "";
+            if (credenciales == null) {
+                manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "Solicitud de inicio de sesion vacia");
+                return;
+            }
 
-            Usuario usuario = usuarioService.iniciarSesion(correo, contrasena);
+            String identificador = "";
+            if (credenciales.has("identificador") && !credenciales.get("identificador").isJsonNull()) {
+                identificador = credenciales.get("identificador").getAsString();
+            } else if (credenciales.has("correo") && !credenciales.get("correo").isJsonNull()) {
+                identificador = credenciales.get("correo").getAsString();
+            }
+            String contrasena = (credenciales.has("contrasena") && !credenciales.get("contrasena").isJsonNull())
+                    ? credenciales.get("contrasena").getAsString()
+                    : "";
 
+            String errorValidacion = usuarioService.validarCredencialesEntrada(identificador, contrasena);
+            if (errorValidacion != null) {
+                manejarError(response, HttpServletResponse.SC_BAD_REQUEST, errorValidacion);
+                return;
+            }
+
+            Usuario usuario = usuarioService.iniciarSesion(identificador, contrasena);
             if (usuario != null) {
-                // Return success
+                response.setStatus(HttpServletResponse.SC_OK);
                 JsonObject json = new JsonObject();
                 json.addProperty("exito", true);
                 json.addProperty("mensaje", "Bienvenido " + usuario.getNombre());
                 json.addProperty("usuarioID", usuario.getUsuarioID());
                 json.addProperty("nombre", usuario.getNombre());
-                if(usuario.getRol() != null) {
+                json.addProperty("correo", usuario.getCorreo());
+                if (usuario.getRol() != null) {
+                    json.addProperty("rolID", usuario.getRol().getRolID());
                     json.addProperty("rol", usuario.getRol().getNombreRol());
+                } else {
+                    json.addProperty("rolID", 3);
+                    json.addProperty("rol", "Cliente");
                 }
                 enviarJSON(response, gson.toJson(json));
             } else {
                 manejarError(response, HttpServletResponse.SC_UNAUTHORIZED, "Credenciales incorrectas");
             }
         } catch (Exception e) {
-            manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "Error al procesar el inicio de sesión");
+            manejarError(response, HttpServletResponse.SC_BAD_REQUEST, "Error al procesar el inicio de sesion: " + e.getMessage());
         }
     }
 
@@ -71,6 +93,6 @@ public class LoginServlet extends HttpServlet {
         errorJson.addProperty("exito", false);
         errorJson.addProperty("mensaje", mensaje);
         enviarJSON(response, gson.toJson(errorJson));
-        System.err.println("ERROR: " + mensaje);
+        System.err.println("ERROR LoginServlet [" + codigo + "]: " + mensaje);
     }
 }
