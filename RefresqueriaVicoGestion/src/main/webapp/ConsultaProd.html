@@ -149,14 +149,14 @@
         </main>
     </div>
 
+    <script src="js/auth-guard.js"></script>
     <script>
         // Mantiene la lógica visual y script original adaptada al nuevo DOM
         const API_URL = "api/productos"; 
         let productosGlobal = [];
 
         document.addEventListener("DOMContentLoaded", () => {
-            const nombre = sessionStorage.getItem('nombre');
-            if (nombre) document.getElementById('adminName').innerText = nombre.split(' ')[0];
+            if (!verificarAcceso(['Administrador'])) return;
 
             cargarProductos();
             document.getElementById("formProducto").addEventListener("submit", guardarProducto);

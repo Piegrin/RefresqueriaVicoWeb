@@ -141,13 +141,13 @@
         </main>
     </div>
 
+    <script src="js/auth-guard.js"></script>
     <script>
         const API_URL = "api/usuarios";
         let usuariosGlobal = [];
 
         document.addEventListener("DOMContentLoaded", () => {
-            const nombre = sessionStorage.getItem('nombre');
-            if (nombre) document.getElementById('adminName').innerText = nombre.split(' ')[0];
+            if (!verificarAcceso(['Administrador'])) return;
 
             cargarUsuarios();
             document.getElementById("formEmpleado").addEventListener("submit", guardarUsuario);

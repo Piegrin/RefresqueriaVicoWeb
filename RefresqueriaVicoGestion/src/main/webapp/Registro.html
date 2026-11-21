@@ -150,13 +150,13 @@
             }
 
             // 4. Preparar el JSON a enviar.
-            // Asignamos RolID = 2 por defecto para clientes regulares
+            // Asignamos RolID = 3 por defecto para clientes regulares
             const payload = {
                 nombre: nombre,
                 correo: correo,
                 telefono: telefono,
                 contrasenaHash: contrasena,
-                rol: { rolID: 2 }
+                rol: { rolID: 3 }
             };
 
             try {
@@ -168,7 +168,7 @@
 
                 const data = await response.json();
                 
-                if (response.ok) {
+                if (response.ok && data.exito !== false) {
                     Swal.fire({
                         icon: 'success',
                         title: '¡Cuenta Creada!',

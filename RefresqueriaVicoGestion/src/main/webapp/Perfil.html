@@ -179,11 +179,12 @@
                 });
 
                 const data = await response.json();
-                if (response.ok) {
+                if (response.ok && data.exito !== false) {
                     // Actualizar sessionStorage con el nuevo nombre
                     sessionStorage.setItem('nombre', nombre);
+                    sessionStorage.setItem('correo', correo);
                     Swal.fire({
-                        title: '¡Actualizado!',
+                        title: 'Actualizado',
                         text: 'Tus datos se guardaron correctamente.',
                         icon: 'success',
                         confirmButtonColor: '#eab308'
@@ -212,7 +213,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     sessionStorage.clear();
-                    window.location.href = 'home.html';
+                    window.location.href = 'Login.html';
                 }
             });
         }

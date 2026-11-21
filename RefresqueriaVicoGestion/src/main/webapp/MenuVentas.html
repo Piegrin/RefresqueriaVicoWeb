@@ -161,6 +161,7 @@
     </div>
 
     <!-- SCRIPT (Lógica Visual Adaptada) -->
+    <script src="js/auth-guard.js"></script>
     <script>
         const TIPO_CAMBIO = 19.5;
         const venta = [];
@@ -383,7 +384,10 @@
             }
         }
 
-        window.onload = cargarProductos;
+        window.onload = function () {
+            if (!verificarAcceso(['Administrador', 'Empleado'])) return;
+            cargarProductos();
+        };
     </script>
 </body>
 </html>

@@ -224,6 +224,12 @@
                         adminBtn.className = "hidden sm:flex items-center text-sm font-bold text-white bg-gray-900 hover:bg-gray-800 px-4 py-2 rounded-xl transition shadow-sm ml-4";
                         adminBtn.innerHTML = '<i class="fa-solid fa-gauge mr-2"></i> Panel Admin';
                         accountBtn.parentNode.parentNode.insertBefore(adminBtn, accountBtn.parentNode.nextSibling);
+                    } else if (userRole === 'Empleado') {
+                        const posBtn = document.createElement('a');
+                        posBtn.href = "MenuVentas.html";
+                        posBtn.className = "hidden sm:flex items-center text-sm font-bold text-gray-900 bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded-xl transition shadow-sm ml-4";
+                        posBtn.innerHTML = '<i class="fa-solid fa-cash-register mr-2"></i> Punto de Venta';
+                        accountBtn.parentNode.parentNode.insertBefore(posBtn, accountBtn.parentNode.nextSibling);
                     }
                 }
             }
