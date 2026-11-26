@@ -3,10 +3,12 @@ package ByteBuilders.Negocio;
 import ByteBuilders.Entidad.*;
 import ByteBuilders.Persistencia.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class ProductoService {
 
     private final ProductoDAO productoDAO = new ProductoDAO();
+    private final CategoriaDAO categoriaDAO = new CategoriaDAO();
 
     public List<Producto> listarProductos() {
         return productoDAO.obtenerTodos();
@@ -16,25 +18,68 @@ public class ProductoService {
         return productoDAO.obtenerPorID(id);
     }
 
+    // Letras (con acentos y ñ), números, espacios y puntuación básica
+    private static final Pattern REGEX_NOMBRE =
+            Pattern.compile("^[\\p{L}\\p{N} .,&'\\-]{1,100}$");
+    private static final Pattern REGEX_DESCRIPCION =
+            Pattern.compile("^[\\p{L}\\p{N} .,;:!?()&'\\-\\r\\n]{0,500}$");
+
+    /**
+     * Valida y registra un producto nuevo.
+     * @throws IllegalArgumentException con el motivo si alguna validación falla
+     */
     public boolean registrarProducto(Producto p) {
-        if (p.getNombre() == null || p.getNombre().trim().isEmpty()) {
-            System.out.println("Error: El nombre del producto es obligatorio.");
-            return false;
+        validarAlta(p);
+        return productoDAO.insertar(p);
+    }
+
+    private void validarAlta(Producto p) {
+        if (p == null) {
+            throw new IllegalArgumentException("El producto es obligatorio.");
         }
-        if (p.getPrecioVenta() <= 0) {
-            System.out.println("Error: El precio de venta debe ser mayor a 0.");
-            return false;
+
+        // Nombre: obligatorio, caracteres permitidos
+        String nombre = p.getNombre() == null ? "" : p.getNombre().trim();
+        if (nombre.isEmpty()) {
+            throw new IllegalArgumentException("El nombre del producto es obligatorio.");
         }
-        
-        List<Producto> existentes = productoDAO.obtenerTodos();
-        for (Producto existente : existentes) {
-            if (existente.getNombre().equalsIgnoreCase(p.getNombre().trim())) {
-                System.out.println("Error: Ya existe un producto con el nombre " + p.getNombre());
-                return false;
+        if (!REGEX_NOMBRE.matcher(nombre).matches()) {
+            throw new IllegalArgumentException("El nombre contiene caracteres no permitidos o excede 100 caracteres.");
+        }
+
+        // Descripción: opcional, caracteres permitidos
+        String descripcion = p.getDescripcion();
+        if (descripcion != null && !REGEX_DESCRIPCION.matcher(descripcion).matches()) {
+            throw new IllegalArgumentException("La descripción contiene caracteres no permitidos o excede 500 caracteres.");
+        }
+
+        // Precio e inventario
+        if (p.getPrecio() <= 0) {
+            throw new IllegalArgumentException("El precio debe ser mayor a 0.");
+        }
+        if (p.getInventario() < 0) {
+            throw new IllegalArgumentException("El inventario debe ser mayor o igual a 0.");
+        }
+
+        // Categoría: debe existir en la base de datos
+        if (p.getCategoria() == null || p.getCategoria().getCategoriaID() <= 0) {
+            throw new IllegalArgumentException("Debes seleccionar una categoría válida.");
+        }
+        Categoria categoria = categoriaDAO.obtenerPorID(p.getCategoria().getCategoriaID());
+        if (categoria == null) {
+            throw new IllegalArgumentException("La categoría seleccionada no existe.");
+        }
+
+        // Nombre único (sin distinguir mayúsculas)
+        for (Producto existente : productoDAO.obtenerTodos()) {
+            if (existente.getNombre() != null && existente.getNombre().trim().equalsIgnoreCase(nombre)) {
+                throw new IllegalArgumentException("Ya existe un producto con el nombre \"" + nombre + "\".");
             }
         }
-        
-        return productoDAO.insertar(p);
+
+        // Normaliza: nombre sin espacios sobrantes y categoría real de la BD
+        p.setNombre(nombre);
+        p.setCategoria(categoria);
     }
 
     public boolean actualizarStock(int productoID, int nuevaCantidad) {
@@ -76,6 +121,3 @@ public class ProductoService {
         return productoDAO.obtenerTodos();
     }
 }
-
-
-
